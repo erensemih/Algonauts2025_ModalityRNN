@@ -24,3 +24,12 @@ When you run main.py, it will first extract visual, audio, and language features
 To ensure all movies with extracted features are included in model training, set the MOVIES parameter in src/training/training_config.py to your desired list of movies.
 
 Once these configurations are set, main.py will proceed through feature extraction followed by model training and evaluation.
+
+
+## Results
+
+## Friends Season 7 Final Results
+![Friends Season 7](figures/friends_7.png)
+
+## Ood Final Results
+![ood](figures/ood.png)
