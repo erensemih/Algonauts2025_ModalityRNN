@@ -1,0 +1,1 @@
+![Açıklayıcı Alt Metin](figures/pipeline-1.png)
