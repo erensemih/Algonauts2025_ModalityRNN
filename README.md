@@ -1,1 +1,2 @@
-![Açıklayıcı Alt Metin](figures/pipeline-1.png)
+## Model Architecture
+![Model Architecture](figures/pipeline-1.png)
