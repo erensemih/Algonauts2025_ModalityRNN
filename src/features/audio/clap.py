@@ -63,15 +63,15 @@ def save_clap_features():
     tr = feat_cfg.TR
     for movie in feat_cfg.ALL_MOVIES:
         if movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../../stimuli/movies/friends"
+            stimuli_root = "../stimuli/movies/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../../stimuli/movies/movie10"
+            stimuli_root = "../stimuli/movies/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../../stimuli/movies/ood"
+            stimuli_root = "../stimuli/movies/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
         
         episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))

@@ -2,7 +2,7 @@ import os
 import numpy as np
 import torch
 from torch.utils.data import Dataset
-from data_config import Config as data_cfg
+from data.data_config import Config as data_cfg
 
 from data.utils import pad_or_crop
 from data.fmri import load_fmri

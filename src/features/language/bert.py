@@ -148,15 +148,15 @@ def save_bert_features():
             continue
 
         elif movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../../stimuli/transcripts/friends"
+            stimuli_root = "../stimuli/transcripts/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../../stimuli/transcripts/movie10"
+            stimuli_root = "../stimuli/transcripts/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../../stimuli/transcripts/ood"
+            stimuli_root = "../stimuli/transcripts/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         save_dir = f"data/bert/{movie}"
