@@ -82,11 +82,11 @@ def train_models(all_modality_train_dataset, no_language_train_dataset, criterio
 
             all_modality_ckpt = os.path.join(
                 train_cfg.ALL_MODALITY_MODEL_PATHS,
-                f"all_modality_epoch_{seed}_{epoch}.mdl"
+                f"model_{seed}_{epoch}.mdl"
             )
             no_language_ckpt = os.path.join(
                 train_cfg.NO_LANGUAGE_MODEL_PATHS,
-                f"no_language_epoch_{seed}_{epoch}.mdl"
+                f"model_{seed}_{epoch}.mdl"
             )
 
             torch.save(all_modality_model_state, all_modality_ckpt)
