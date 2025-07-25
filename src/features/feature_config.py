@@ -11,8 +11,7 @@ class Config:
     FRIENDS_SEASONS: tuple = (1, 2, 3, 4, 5, 6, 7)
     MOVIE10_MOVIES: tuple = ("wolf", "bourne", "life", "figures")
     OOD_MOVIES: tuple = ("chaplin", "mononoke", "passepartout", "planetearth", "pulpfiction", "wot")
-    #ALL_MOVIES: tuple =  ("life", "chaplin")
-    ALL_MOVIES: tuple = ("life",)
+    ALL_MOVIES: tuple = ("life", "chaplin", "mononoke", "passepartout", "planetearth", "pulpfiction", "wot")
     NO_LANGUAGE_MOVIES: tuple = ("chaplin",)
 
     BERT_WINDOW: int = 256
