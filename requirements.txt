@@ -1,8 +1,8 @@
-torch==2.7.1
-torchvision==0.22.1
-transformers==4.51.3
-datasets==4.0.0
-huggingface-hub==0.33.3
-openai==1.95.0
 numpy==1.26.4
 pandas==2.2.3
+torch==2.7.1
+moviepy==1.0.3
+transformers==4.51.3
+torchvision==0.22.1
+pytorchvideo==0.1.5
+h5py==3.13.0
