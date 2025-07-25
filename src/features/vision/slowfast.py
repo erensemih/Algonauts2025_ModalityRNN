@@ -8,7 +8,7 @@ import glob
 import numpy as np
 import copy
 import torch
-from feature_config import Config as feat_cfg
+from features.feature_config import Config as feat_cfg
 
 device = feat_cfg.DEVICE
 
@@ -64,12 +64,11 @@ def get_vision_models(device):
     return feature_extractor, original_model
 
 
-def extract_slowfast_features(episode_path, tr,
+def extract_visual_features(episode_path, tr, feature_extractor,
                             transform, device, save_dir, season_num):
     clip = VideoFileClip(episode_path)
     start_times = [x for x in np.arange(0, clip.duration, tr)][:-1]
     extracted_features = []
-    print(clip.duration)
     
     if len(start_times) > feat_cfg.SKIP_LENGTH:
         return
@@ -92,7 +91,6 @@ def extract_slowfast_features(episode_path, tr,
         extracted_features.append(np.reshape(ext_feats.cpu().numpy(), -1))
 
     extracted_features = np.array(extracted_features, dtype='float32')
-    print(extracted_features.shape)
 
     season_folder = os.path.join(save_dir, f"{season_num}")
     os.makedirs(season_folder, exist_ok=True)
@@ -104,76 +102,27 @@ def save_slowfast_features():
     transform = define_frames_transform()
     feature_extractor, model = get_vision_models(device)
         
-    save_dir = "../final_features/slowfast"
+    save_dir = "data/slowfast"
+    os.makedirs(save_dir, exist_ok=True)
     tr = feat_cfg.TR
 
     for movie in feat_cfg.ALL_MOVIES:
         if movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../stimuli/movies/friends"
+            stimuli_root = "../../stimuli/movies/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../stimuli/movies/movie10"
+            stimuli_root = "../../stimuli/movies/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../stimuli/movies/ood"
+            stimuli_root = "../../stimuli/movies/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
 
         for episode_path in episode_paths:
-            extract_slowfast_features(episode_path, tr,
+            extract_visual_features(episode_path, tr, feature_extractor,
                                 transform, device,
                                 save_dir, movie)
 
-
-
-
-
-
-
-
-
-
-
-
-
-stimuli_root = "../stimuli/movies/ood"
-
-for season_num in ["chaplin", "mononoke", "passepartout", "planetearth", "pulpfiction", "wot"]:
-    season_dir = os.path.join(stimuli_root, f"{season_num}")
-    episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
-
-    for episode_path in episode_paths:
-        extract_visual_features(
-            episode_path, tr, transform,
-            device,
-            save_dir_features, season_num
-        )
-
-stimuli_root = "../stimuli/movies/movie10"
-
-for season_num in ["bourne", "figures", "life", "wolf"]:
-    season_dir = os.path.join(stimuli_root, f"{season_num}")
-    episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
-
-    for episode_path in episode_paths:
-        extract_visual_features(
-            episode_path, tr, transform,
-            device,
-            save_dir_features, season_num
-        )
-        
-stimuli_root = "../stimuli/movies/friends"
-
-for season_num in range(1, 8):
-    season_dir = os.path.join(stimuli_root, f"s{season_num}")
-    episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
-
-    for episode_path in episode_paths:
-        extract_visual_features(
-            episode_path, tr, transform,
-            device,
-            save_dir_features, season_num
-        )

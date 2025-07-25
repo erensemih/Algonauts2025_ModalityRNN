@@ -3,12 +3,16 @@ import torch
 from torch.utils.data import DataLoader
 import os
 import zipfile
+import glob
+
 
 from data.all_modality_dataset import AllModalityDataset
 from data.no_language_dataset import NoLanguageDataset
-from inference_config import Config as inf_cfg
+from inference.inference_config import Config as inf_cfg
 from training.models import LSTMRegressor
 from training.train_utils.utils import init_model
+from training.train_utils.utils import train_models, get_config_for_seed
+
 
 
 def build_dataloader(dataset_cls, subject: str, movies: list, batch_size: int = 1) -> DataLoader:
@@ -24,14 +28,13 @@ def build_dataloader(dataset_cls, subject: str, movies: list, batch_size: int = 
     Returns:
         DataLoader for inference (no shuffling).
     """
-    dataset = dataset_cls(subjects=[subject], seasons=movies, with_target=False, train=False)
+    dataset = dataset_cls(subjects=[subject], movies=movies, with_target=False, train=False)
     return DataLoader(dataset, batch_size=batch_size, shuffle=False)
 
 
 def predict_on_loader(
     dataloader: DataLoader,
-    model: LSTMRegressor,
-    model_paths: list,
+    model_path: list,
     lag: int,
     device: torch.device,
     key_parser=None
@@ -60,8 +63,12 @@ def predict_on_loader(
         preds = None
 
         # Accumulate outputs over all checkpoints
-        for ckpt_path in model_paths:
-            state = torch.load(ckpt_path, map_location=device)
+        paths = glob.glob(f"{model_path}/*.mdl")
+        for mdl_path in paths:
+            seed = int(mdl_path.split("/")[2].split(".")[0].split("_")[1])
+            _, model_type = get_config_for_seed(seed)
+            model = init_model(dataloader.dataset ,model_type)
+            state = torch.load(mdl_path, map_location=device)
             model.load_state_dict(state)
             model.eval()
 
@@ -96,45 +103,44 @@ def predict_movies(subject: str) -> dict:
     Returns:
         Dictionary mapping episode identifiers to prediction arrays.
     """
-    # Prepare dataloaders
-    all_mod_loader = build_dataloader(AllModalityDataset, subject, inf_cfg.ALL_MODALITY_SUBMISSION_MOVIES)
-    no_lang_loader = build_dataloader(NoLanguageDataset, subject, inf_cfg.NO_LANGUAGE_SUBMISSION_MOVIES)
-
-    # Initialize models
-    all_mod_model = init_model(all_mod_loader.dataset.get_modality_dims())
-    no_lang_model = init_model(no_lang_loader.dataset.get_modality_dims())
-
+    
     # Helper to extract numeric key
     key_parser = lambda k: k.split("_")[1]
 
     # Run inference
     subject_predictions = {}
-    subject_predictions.update(
-        predict_on_loader(
-            all_mod_loader,
-            all_mod_model,
-            inf_cfg.ALL_MODALITY_MODEL_PATHS,
-            all_mod_loader.dataset.lag,
-            inf_cfg.DEVICE,
-            key_parser
+    
+    # Prepare dataloaders
+    if len(inf_cfg.ALL_MODALITY_SUBMISSION_MOVIES) > 0:
+        all_mod_loader = build_dataloader(AllModalityDataset, subject, inf_cfg.ALL_MODALITY_SUBMISSION_MOVIES)
+        subject_predictions.update(
+            predict_on_loader(
+                all_mod_loader,
+                inf_cfg.ALL_MODALITY_MODEL_PATHS,
+                all_mod_loader.dataset.lag,
+                inf_cfg.DEVICE,
+                key_parser
+            )
         )
-    )
-    subject_predictions.update(
-        predict_on_loader(
-            no_lang_loader,
-            no_lang_model,
-            inf_cfg.NO_LANGUAGE_MODEL_PATHS,
-            no_lang_loader.dataset.lag,
-            inf_cfg.DEVICE,
-            key_parser
+    if len(inf_cfg.NO_LANGUAGE_SUBMISSION_MOVIES) > 0:
+        no_lang_loader = build_dataloader(NoLanguageDataset, subject, inf_cfg.NO_LANGUAGE_SUBMISSION_MOVIES)
+        subject_predictions.update(
+            predict_on_loader(
+                no_lang_loader,
+                inf_cfg.NO_LANGUAGE_MODEL_PATHS,
+                no_lang_loader.dataset.lag,
+                inf_cfg.DEVICE,
+                key_parser
+            )
         )
-    )
 
     return subject_predictions
 
 
 def save_submission(submission):
     # Save the predicted fMRI dictionary as a .npy file
+    os.makedirs(inf_cfg.SUBMISSION_NUMPY_SAVE_DIR, exist_ok=True)
+
     output_file = inf_cfg.SUBMISSION_NUMPY_SAVE_DIR + "/submission.npy"
     np.save(output_file, submission)
     print(f"Formatted predictions saved to: {output_file}")

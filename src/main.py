@@ -11,14 +11,18 @@ extract_visual_features()
 extract_audio_features()
 extract_language_features()
 
-all_modality_train_dataset = AllModalityDataset(train_cfg.SUBJECTS, seasons=train_cfg.MOVIES,  with_target=True, train=True)
-no_language_train_dataset = NoLanguageDataset(train_cfg.SUBJECTS, seasons=train_cfg.MOVIES,  with_target=True, train=True)
-
+all_modality_train_dataset = AllModalityDataset(train_cfg.SUBJECTS, movies=train_cfg.MOVIES,  with_target=True, train=True)
+no_language_train_dataset = NoLanguageDataset(train_cfg.SUBJECTS, movies=train_cfg.MOVIES,  with_target=True, train=True)
+    
 for remove_key in train_cfg.REMOVE_KEYS:
-    all_modality_train_dataset.keys.remove(remove_key)
-    no_language_train_dataset.keys.remove(remove_key)
+    try:
+        all_modality_train_dataset.keys.remove(remove_key)
+        no_language_train_dataset.keys.remove(remove_key)
 
-for seed in range(train_cfg.SEEDS):
+    except ValueError:
+        pass
+
+for seed in train_cfg.SEEDS:
     print("SEED : ", seed)
     criterion, model_type = get_config_for_seed(seed)
     train_models(all_modality_train_dataset, no_language_train_dataset, criterion, model_type, seed)

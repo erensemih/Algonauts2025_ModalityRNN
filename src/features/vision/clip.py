@@ -6,7 +6,7 @@ from pathlib import Path
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from tqdm import tqdm
 from transformers import CLIPProcessor, CLIPModel
-from feature_config import Config as feat_cfg
+from features.feature_config import Config as feat_cfg
 
 device = feat_cfg.DEVICE
 
@@ -63,31 +63,31 @@ def extract_clip_features(episode_path, chunk_duration, processor,
         chunk_feat = img_feats.mean(axis=0)
         all_feats.append(chunk_feat.astype('float32'))
 
-
+    all_feats = np.stack(all_feats, axis=0)
     season_dir = Path(save_dir) / season_name
     season_dir.mkdir(parents=True, exist_ok=True)
     fname = Path(episode_path).stem + "_features.npy"
     np.save(season_dir / fname, all_feats)
-    print(f"Saved {all_feats.shape} to {season_dir / fname}")
 
 
 def save_clip_features():
     processor, clip_model = get_clip_model(device)
 
     tr = feat_cfg.TR
-    save_dir = "../final_features/clip"
+    save_dir = "data/clip"
+    os.makedirs(save_dir, exist_ok=True)
 
     for movie in feat_cfg.ALL_MOVIES:
         if movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../stimuli/movies/friends"
+            stimuli_root = "../../stimuli/movies/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../stimuli/movies/movie10"
+            stimuli_root = "../../stimuli/movies/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../stimuli/movies/ood"
+            stimuli_root = "../../stimuli/movies/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))

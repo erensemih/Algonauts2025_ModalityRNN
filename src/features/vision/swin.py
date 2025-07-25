@@ -11,7 +11,7 @@ from tqdm.notebook import tqdm
 from moviepy.editor import VideoFileClip
 import torch
 from torchvision.models.video import swin3d_b, Swin3D_B_Weights
-from feature_config import Config as feat_cfg
+from features.feature_config import Config as feat_cfg
 
 device = feat_cfg.DEVICE
 
@@ -84,27 +84,28 @@ def extract_swin_features(
     extracted_features = np.array(extracted_features).astype('float32')
     season_folder = os.path.join(save_dir, str(season_num))
     os.makedirs(season_folder, exist_ok=True)
-    filename = os.path.splitext(os.path.basename(episode_path))[0] + '_swin_features.npy'
+    filename = os.path.splitext(os.path.basename(episode_path))[0] + '_features.npy'
     np.save(os.path.join(season_folder, filename), extracted_features)
 
 
 def save_swin_features():
     model, preprocess = get_vision_models(device)
 
-    save_dir_features = "../final_features/swin"
+    save_dir = "data/swin"
+    os.makedirs(save_dir, exist_ok=True)
     tr = feat_cfg.TR
 
     for movie in feat_cfg.ALL_MOVIES:
         if movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../stimuli/movies/friends"
+            stimuli_root = "../../stimuli/movies/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../stimuli/movies/movie10"
+            stimuli_root = "../../stimuli/movies/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../stimuli/movies/ood"
+            stimuli_root = "../../stimuli/movies/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
@@ -113,5 +114,5 @@ def save_swin_features():
             extract_swin_features(
                 episode_path, tr, model, preprocess,
                 device,
-                save_dir_features, movie
+                save_dir, movie
             )

@@ -5,7 +5,7 @@ import torchaudio
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from tqdm import tqdm
 import glob
-from feature_config import Config as feat_cfg
+from features.feature_config import Config as feat_cfg
 
 device = feat_cfg.DEVICE
 bundle = torchaudio.pipelines.WAVLM_LARGE
@@ -34,7 +34,6 @@ def extract_audio_features(
     if len(start_times) > 1000:
         print(f"Skipping {os.path.basename(episode_path)}: too many ({len(start_times)}) chunks")
         return
-    print(f"Episode duration: {total_duration:.2f} sec → {len(start_times)} chunks of {tr:.2f} sec each.")
 
     all_embeddings = []  # will hold one 1D vector per chunk
 
@@ -62,7 +61,6 @@ def extract_audio_features(
         embeddings_np = embeddings.squeeze(0).cpu().numpy()  # shape (768,)
         all_embeddings.append(embeddings_np)
     audio_features = np.vstack(all_embeddings).astype('float32')
-    print("Resulting audio_features shape:", audio_features.shape)
     season_folder = os.path.join(save_dir, f"{season_num}")
     os.makedirs(season_folder, exist_ok=True)
     fname = os.path.splitext(os.path.basename(episode_path))[0] + "_features.npy"
@@ -70,20 +68,21 @@ def extract_audio_features(
 
 
 def save_wavlm_features():
-    save_dir_features_root = "../final_features/WavLM"
+    save_dir_features_root = "data/WavLM"
+    os.makedirs(save_dir_features_root, exist_ok=True)
     tr = feat_cfg.TR
 
     for movie in feat_cfg.ALL_MOVIES:
         if movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../stimuli/movies/friends"
+            stimuli_root = "../../stimuli/movies/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../stimuli/movies/movie10"
+            stimuli_root = "../../stimuli/movies/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../stimuli/movies/ood"
+            stimuli_root = "../../stimuli/movies/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))

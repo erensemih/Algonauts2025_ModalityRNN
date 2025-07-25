@@ -5,7 +5,7 @@ from tqdm.notebook import tqdm
 from moviepy.editor import VideoFileClip
 import torch
 from transformers import VideoMAEImageProcessor, VideoMAEModel
-from feature_config import Config as feat_cfg
+from features.feature_config import Config as feat_cfg
 
 device = feat_cfg.DEVICE
 
@@ -26,7 +26,7 @@ def get_vision_model(device):
     return model, processor
 
 
-def extract_videomae_features(episode_path, tr, processor, model,
+def extract_videomae_features(episode_path, tr, processor, feature_extractor,
                             device, save_dir, season_num):
     clip = VideoFileClip(episode_path)
     start_times = [x for x in np.arange(0, clip.duration, tr)][:-1]
@@ -37,8 +37,7 @@ def extract_videomae_features(episode_path, tr, processor, model,
         return
     
     num_frames = feature_extractor.config.num_frames  # typically 8
-    print(num_frames)
-    print(clip.duration)
+
 
     for i, start in enumerate(tqdm(start_times, desc=f"Season {season_num} - {os.path.basename(episode_path)}")):
         clip_chunk = clip.subclip(start, start + tr)
@@ -59,38 +58,38 @@ def extract_videomae_features(episode_path, tr, processor, model,
         extracted_features.append(ext_feats)
         
     extracted_features = np.array(extracted_features, dtype='float32')
-    print(extracted_features.shape)
 
     season_folder = os.path.join(save_dir, f"{season_num}")
     os.makedirs(season_folder, exist_ok=True)
-    filename = os.path.splitext(os.path.basename(episode_path))[0] + '_videomae_features.npy'
+    filename = os.path.splitext(os.path.basename(episode_path))[0] + '_features.npy'
     np.save(os.path.join(season_folder, filename), extracted_features)
 
 
 def save_videomae_features():
     model, processor = get_vision_model(device)
-    save_dir_features = "../final_features/videomae"
+    save_dir = "data/videomae"
+    os.makedirs(save_dir, exist_ok=True)
 
     tr = feat_cfg.TR
 
     for movie in feat_cfg.ALL_MOVIES:
         if movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../stimuli/movies/friends"
+            stimuli_root = "../../stimuli/movies/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../stimuli/movies/movie10"
+            stimuli_root = "../../stimuli/movies/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../stimuli/movies/ood"
+            stimuli_root = "../../stimuli/movies/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
 
         for episode_path in episode_paths:
-            extract_videomae_features(
-                episode_path, tr, model, processor,
+            extract_videomae_features( 
+                episode_path, tr, processor, model,
                 device,
-                save_dir_features, movie
+                save_dir, movie
             )

@@ -5,7 +5,7 @@ import pandas as pd
 from tqdm.notebook import tqdm
 import torch
 from transformers import AutoTokenizer, AutoModel
-from feature_config import Config as feat_cfg
+from features.feature_config import Config as feat_cfg
 
 device = feat_cfg.DEVICE
 
@@ -158,19 +158,20 @@ def save_longformer_features():
             continue
 
         elif movie in feat_cfg.FRIENDS_SEASONS:
-            stimuli_root = "../stimuli/movies/friends"
+            stimuli_root = "../../stimuli/transcripts/friends"
             season_dir = os.path.join(stimuli_root, f"s{movie}")
 
         elif movie in feat_cfg.MOVIE10_MOVIES:
-            stimuli_root = "../stimuli/movies/movie10"
+            stimuli_root = "../../stimuli/transcripts/movie10"
             season_dir = os.path.join(stimuli_root, f"{movie}")
 
         elif movie in feat_cfg.OOD_MOVIES:
-            stimuli_root = "../stimuli/movies/ood"
+            stimuli_root = "../../stimuli/transcripts/ood"
             season_dir = os.path.join(stimuli_root, f"{movie}")
  
-        save_dir = f"../final_features/bert/{movie}"
-        episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.mkv")))
+        save_dir = f"data/longformer/{movie}"
+        os.makedirs(save_dir, exist_ok=True)
+        episode_paths = sorted(glob.glob(os.path.join(season_dir, "*.tsv")))
 
         token_buffer = []
         for episode_path in episode_paths:
