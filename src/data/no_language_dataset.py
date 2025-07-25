@@ -38,14 +38,14 @@ class NoLanguageDataset(Dataset):
         self.features = {}
 
         for season in seasons:
-            visual_folder1 = f'../final_features/slowfast/{season}'
-            visual_folder2 = f'../final_features/swin/{season}'
-            visual_folder3 = f'../final_features/videomae/{season}'
-            visual_folder4 = f'../final_features/clip/{season}'
+            visual_folder1 = f'data/slowfast/{season}'
+            visual_folder2 = f'data/swin/{season}'
+            visual_folder3 = f'data/videomae/{season}'
+            visual_folder4 = f'data/clip/{season}'
 
-            audio_folder1 = f'../final_features/hubert/{season}' 
-            audio_folder2 = f'../final_features/WavLM/{season}' 
-            audio_folder3 = f'../final_features/clap/{season}' 
+            audio_folder1 = f'data/hubert/{season}' 
+            audio_folder2 = f'data/WavLM/{season}' 
+            audio_folder3 = f'data/clap/{season}' 
 
             season_fmri_keys = {
                                 key
