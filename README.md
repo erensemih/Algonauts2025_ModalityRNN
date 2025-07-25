@@ -18,7 +18,7 @@ python main.py
 ```
 
 ## Pipeline Details
-
+Before training, you should download stimuli and fMRI data via DataLad from the competition GitHub repository and place them in the same directory as the src folder.
 When you run main.py, it will first extract visual, audio, and language features for the movies defined in the ALL_MOVIES parameter in src/features/feature_config.py. By default for quick trials, this includes only Friends Seasons 6 and 7, and ood movies; to process all movies, update the ALL_MOVIES list accordingly.
 
 To ensure all movies with extracted features are included in model training, set the MOVIES parameter in src/training/training_config.py to your desired list of movies.
