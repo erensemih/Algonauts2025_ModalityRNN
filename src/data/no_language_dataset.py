@@ -9,7 +9,7 @@ from data.fmri import load_fmri
 
 
 class NoLanguageDataset(Dataset):
-    def __init__(self, subjects, seasons, train=None, with_target=None, fixed_length=data_cfg.FIXED_LENGTH):
+    def __init__(self, subjects, movies, train=None, with_target=None, fixed_length=data_cfg.FIXED_LENGTH):
         self.fixed_length = fixed_length
         self.with_target = with_target
         self.train = train
@@ -37,22 +37,22 @@ class NoLanguageDataset(Dataset):
 
         self.features = {}
 
-        for season in seasons:
-            visual_folder1 = f'data/slowfast/{season}'
-            visual_folder2 = f'data/swin/{season}'
-            visual_folder3 = f'data/videomae/{season}'
-            visual_folder4 = f'data/clip/{season}'
+        for movie in movies:
+            visual_folder1 = f'data/slowfast/{movie}'
+            visual_folder2 = f'data/swin/{movie}'
+            visual_folder3 = f'data/videomae/{movie}'
+            visual_folder4 = f'data/clip/{movie}'
 
-            audio_folder1 = f'data/hubert/{season}' 
-            audio_folder2 = f'data/WavLM/{season}' 
-            audio_folder3 = f'data/clap/{season}' 
+            audio_folder1 = f'data/hubert/{movie}' 
+            audio_folder2 = f'data/WavLM/{movie}' 
+            audio_folder3 = f'data/clap/{movie}' 
 
             season_fmri_keys = {
                                 key
                                 for key in fmri_keys
-                                if (key.startswith("s") and int(key[2]) == season)
-                                or (key[:-1] == season)
-                                or (key[:-2] == season)
+                                if (key.startswith("s") and int(key[2]) == movie)
+                                or (key[:-1] == movie)
+                                or (key[:-2] == movie)
                                 }    
 
             for key in season_fmri_keys:

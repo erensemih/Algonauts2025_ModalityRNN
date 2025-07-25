@@ -37,25 +37,25 @@ class AllModalityDataset(Dataset):
 
         self.features = {}
 
-        for movies in movies:
-            visual_folder1 = f'data/slowfast/{movies}'
-            visual_folder2 = f'data/swin/{movies}'
-            visual_folder3 = f'data/videomae/{movies}'
-            visual_folder4 = f'data/clip/{movies}'
+        for movie in movies:
+            visual_folder1 = f'data/slowfast/{movie}'
+            visual_folder2 = f'data/swin/{movie}'
+            visual_folder3 = f'data/videomae/{movie}'
+            visual_folder4 = f'data/clip/{movie}'
 
-            audio_folder1 = f'data/hubert/{movies}' 
-            audio_folder2 = f'data/WavLM/{movies}' 
-            audio_folder3 = f'data/clap/{movies}' 
+            audio_folder1 = f'data/hubert/{movie}' 
+            audio_folder2 = f'data/WavLM/{movie}' 
+            audio_folder3 = f'data/clap/{movie}' 
 
-            language_folder1 = f"data/bert/{movies}"
-            language_folder2 = f"data/longformer/{movies}"
+            language_folder1 = f"data/bert/{movie}"
+            language_folder2 = f"data/longformer/{movie}"
 
             movie_fmri_keys = {
                                 key
                                 for key in fmri_keys
-                                if (key.startswith("s") and int(key[2]) == movies)
-                                or (key[:-1] == movies)
-                                or (key[:-2] == movies)
+                                if (key.startswith("s") and int(key[2]) == movie)
+                                or (key[:-1] == movie)
+                                or (key[:-2] == movie)
                                 }
 
             for key in movie_fmri_keys:
