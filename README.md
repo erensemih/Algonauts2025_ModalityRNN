@@ -1,6 +1,6 @@
 ## Collaborators
 - Semih Eren ([erensemih97@outlook.com](erensemih97@outlook.com))
-- Deniz Kucukahmetler([denizkahmetler@gmail](denizkahmetler@gmail))
+- Deniz Kucukahmetler([denizkahmetler@gmail](denizkahmetler@gmail.com))
 
 ## Report Link
 [https://arxiv.org/abs/2507.17897](https://arxiv.org/abs/2507.17897)
