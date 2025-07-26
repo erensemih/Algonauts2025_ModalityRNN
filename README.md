@@ -1,3 +1,10 @@
+## Collaborators
+- Semih Eren ([erensemih97@outlook.com](erensemih97@outlook.com))
+- Deniz Kucukahmetler([denizkahmetler@gmail](denizkahmetler@gmail))
+
+## Report Link
+[https://arxiv.org/abs/2507.17897](https://arxiv.org/abs/2507.17897)
+
 ## Model Architecture
 ![Model Architecture](figures/pipeline-1.png)
 
